@@ -37,6 +37,20 @@ imp_max = df['Importe'].max()
 print(f"Codigo cliente: {id_max} con un importe de {imp_max}")
 
 df['Importe'] = pd.to_numeric(df['Importe'])
-df[df['Importe'] < 10].replace(10, inplace=True)
+df.loc[df['Importe'] < 10, 'Importe'] = 10
 
+df = df.sort_values(by=['Importe'], ascending=False)
+print(df)
 
+print(df.sort_values(by=['IDCliente'], ascending=True))
+
+index_df = np.array(df.index)
+print(index_df)
+for i in range(len(index_df)):
+    index_df[i] = "c" + str(i + 1)
+
+df['IDcliente'] = index_df
+print(df.head())
+df.reset_index(drop=True, inplace=True)
+df.set_index('IDcliente', inplace=True)
+print(df.head())
