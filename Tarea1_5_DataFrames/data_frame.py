@@ -1,5 +1,5 @@
 import pandas as pd
-import numpy as np
+
 
 pd.to_datetime("20/01/2023", format="%d/%m/%Y")
 df = pd.read_csv(
@@ -44,13 +44,32 @@ print(df)
 
 print(df.sort_values(by=['IDCliente'], ascending=True))
 
-index_df = np.array(df.index)
-print(index_df)
-for i in range(len(index_df)):
-    index_df[i] = "c" + str(i + 1)
+df_reindex = df.rename(index=lambda x: x.replace('0', ''))
+print(df_reindex)
 
-df['IDcliente'] = index_df
+
+def calculate_difference(n1, n2):
+    return n1 - n2
+
+
+val1 = df['Importe'].max()
+val2 = df['Importe'].min()
+
+print(calculate_difference(val1, val2))
+
+correlation = df.corr()
+print(correlation)
 print(df.head())
-df.reset_index(drop=True, inplace=True)
-df.set_index('IDcliente', inplace=True)
+print(df.info())
+
+"""
+Hay Correlación entre fecha de nacimiento y edad pues vemos que las variables tienen relación 
+lineal.
+Suprimiría la columna edad
+"""
+df.drop('Edad', axis=1, inplace=True)
 print(df.head())
+print(df.info())
+
+
+
