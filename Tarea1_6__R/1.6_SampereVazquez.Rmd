@@ -1,0 +1,101 @@
+---
+title: "Tarea 1.6 Ejercicios básicos de R"
+output: html_notebook
+---
+
+#  Tarea 1: Carga de datos desde un ficheros xls
+Carga el fichero Estadisticas_Netflix.xls con los datos de la hoja Netflix annual subscribers
+
+```{r}
+library(readxl)
+ruta_archivo <- "Estadisticas_Netflix.xlsx"
+
+nombre_hoja <- "Netflix annual subscribers"
+
+hojas_disponibles <- excel_sheets(ruta_archivo)
+
+
+if (nombre_hoja %in% hojas_disponibles) {
+  datos_excel <- read_excel(ruta_archivo, sheet = nombre_hoja)
+  print(datos_excel) }else
+    {
+  cat("La hoja", nombre_hoja, "no está presente en el archivo Excel.\n") }
+
+```
+
+# Tarea 2: Extracción de subconjunto
+
+Imprime por pantalla los siguientes subconjuntos del dataframe:    
+
+
+-   Filas de los años entre 2015 y 2016 inclusive.   
+
+-   Valores de los años 2018 y 2020.   
+
+-   Los tres primeros registros   
+
+
+
+```{r}
+# Filas de los años entre 2015 y 2016 inclusive. 
+datos_excel[datos_excel$Date == 2015 | datos_excel$Date == 2016,]
+```
+
+```{r}
+# Valores de los años 2018 y 2020
+datos_excel$`Subscribers  (mm)`[datos_excel$Date == 2015 | datos_excel$Date == 2016]
+```
+```{r}
+# Los tres primeros registros 
+head(datos_excel, n=3)
+```
+# Tarea 3. Suma los valores por áreas mundiales
+Recupera los datos de la hoja Netflix subscribers by áreas y realiza la suma de las columnas del dataframe obtenido añadiendo una fila más al mismo.
+
+
+```{r}
+nombre_hoja <- 'Netflix subscribers by areas'
+datos_excel <- read_excel(ruta_archivo, sheet = nombre_hoja)
+# Suma de columnas y añadimos fila a dataframe
+suma_columnas <- colSums(datos_excel)
+datos_excel = rbind(datos_excel, suma_columnas)
+print(datos_excel)
+```
+
+# Tarea 4. Suma de los ingresos en los últimos 5 años.
+
+Recupera los datos de la hoja Netflix annual net income loss y realiza la suma de las columnas del dataframe obtenido añadiendo una fila más al mismo con la suma de los ingresos de los últimos 5 años.
+
+```{r}
+nombre_hoja <- 'Netflix annual net incomeloss'
+datos_excel <- read_excel(ruta_archivo, sheet = nombre_hoja)
+print(tail(datos_excel, n=5))
+# Suma de 5 últimas filas y añadimos fila a dataframe
+suma_columnas <- sum(tail(datos_excel$`Net Income/Loss ($mm)`, n=5))
+datos_excel = rbind(datos_excel[2],suma_columnas)
+print(tail(datos_excel, n=6))
+
+```
+
+# Tarea 5. Porcentajes relativos de crecimiento y decrecimiento de resultados
+Añade otra columna con el porcentaje de crecimiento (o decrecimiento) con respecto a los beneficios del año anterior.
+
+```{r}
+library('rlist')
+datos_excel <- read_excel(ruta_archivo, sheet = nombre_hoja)
+# Crear un vector para almacenar los valores
+valores <- numeric(nrow(datos_excel))
+
+```
+
+options(warn=-1)
+nombre_hoja <- 'Netflix subscribers by areas'
+datos_excel <- read_excel(ruta_archivo, sheet = nombre_hoja)
+for (n in colnames(datos_excel)){
+  if (n == "Year"){
+   next
+  }else{
+   df_sub_set <- datos_excel[,c('Year',n)]
+   print(df_sub_set[order(df_sub_set[n] , decreasing = TRUE),])
+  }
+}
