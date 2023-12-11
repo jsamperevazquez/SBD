@@ -9,6 +9,7 @@ header_indices = [i for i, item in enumerate(headers) if item]
 
 df_fao = pd.read_csv('fao.csv', usecols=header_indices, encoding='latin-1')
 df_fao['Date'] = pd.to_datetime(df_fao['Date'])
+df_fao.rename(columns={'Date': 'ID_YYYY'}, inplace=True)
 print(df_fao)
 print(df_fao.dtypes)
 """
@@ -18,12 +19,12 @@ de la forma ID_YYYY, siendo YYYY el año para cada producto.
 """
 
 # Calculo la media agrupando por la fecha
-product_mean = df_fao.groupby(df_fao['Date'].dt.year).mean().round(decimals=2)
-
+product_mean = df_fao.groupby(df_fao['ID_YYYY'].dt.year).mean().round(decimals=2)
 print(product_mean)
-
-product_mean.set_index('Date', inplace=True)
+product_mean.set_index('ID_YYYY', inplace=True)
 product_mean.rename(index=lambda x: x.strftime('ID_%Y'), inplace=True)
 
 print(product_mean)
 
+df_faoxls = pd.read_excel('fao.xls', keep_default_na=None, index_col=header_indices)
+print(df_faoxls)
